@@ -156,3 +156,61 @@ Geolocalización
     </script>
 </body>
 </html>
+---pok--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Info</title>
+</head>
+<body>
+    <h1>Pokémon Info</h1>
+    <form id="pokemonForm">
+        <label for="pokemonInput">Enter Pokémon Name or ID:</label>
+        <input type="text" id="pokemonInput" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="pokemonInfo"></div>
+
+    <script>
+        const pokemonForm = document.getElementById('pokemonForm');
+        const pokemonInput = document.getElementById('pokemonInput');
+        const pokemonInfo = document.getElementById('pokemonInfo');
+
+        pokemonForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const pokemonNameOrId = pokemonInput.value.trim().toLowerCase();
+            if (pokemonNameOrId) {
+                getPokemonInfo(pokemonNameOrId);
+            }
+        });
+
+        async function getPokemonInfo(pokemonNameOrId) {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonNameOrId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                displayPokemonInfo(data);
+            } else {
+                pokemonInfo.innerHTML = `<p>Pokémon not found. Please enter a valid name or ID.</p>`;
+            }
+        }
+
+        function displayPokemonInfo(data) {
+            const { name, id, types, height, weight, sprites } = data;
+
+            const pokemonInfoHTML = `
+                <h2>${name.toUpperCase()}</h2>
+                <p>ID: ${id}</p>
+                <p>Type(s): ${types.map(type => type.type.name).join(', ')}</p>
+                <p>Height: ${height / 10} m</p>
+                <p>Weight: ${weight / 10} kg</p>
+                <img src="${sprites.front_default}" alt="${name}">
+            `;
+
+            pokemonInfo.innerHTML = pokemonInfoHTML;
+        }
+    </script>
+</body>
+</html>
